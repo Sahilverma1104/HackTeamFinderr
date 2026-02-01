@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>User Dashboard</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="logo">
+      <span class="emoji">👥</span>
+      <span class="title">HackTeamFinder</span>
+    </div>
+
+    <div class="nav-links">
+      <a href="index.html"><span class="emoji">🏠</span> Home</a>
+      <a href="hackathon.html"><span class="emoji">👤</span> Hackathons</a>
+      <a href="find-teams.html"><span class="emoji">👥</span> Teams</a>
+    </div>
+
+    <button onclick="logout()" class="logout-btn">Logout</button>
+  </nav>
+
+  <!-- Dashboard -->
+  <section class="dashboard">
+    <img id="userPic" alt="Profile Picture" />
+    <p>Email: <span id="userEmail"></span></p>
+    <h2>Welcome to your personal dashboard 🎯</h2>
+  </section>
+
+  <script src="script.js"></script>
+
+<script>
+  const email = localStorage.getItem("userEmail");
+  if (!email) {
+    window.location.href = "index.html";
+  }
+
+  const uid = email.replace(/[@.]/g, "_");
+
+  firebase.database().ref("users/" + uid).once("value")
+    .then(snap => {
+      if (!snap.exists() || snap.val().profileCompleted !== true) {
+        window.location.href = "profile-setup.html";
+      }
+    });
+</script>
+
+</body>
+</html>

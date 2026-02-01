@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>HackTeamFinder</title>
+  <link rel="stylesheet" href="styles.css">
+
+  <!-- Google GSI (ONLY ONCE) -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3.1.2/build/jwt-decode.min.js"></script>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
+</head>
+
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="logo">
+      <span class="emoji">👥</span>
+      <span class="title">HackTeamFinder</span>
+    </div>
+
+    <div class="nav-links">
+      <a href="index.html"><span class="emoji">🏠</span> Home</a>
+      <a href="hackathon.html"><span class="emoji">👤</span> Hackathons</a>
+      <a href="find-teams.html"><span class="emoji">👥</span> Teams</a>
+    </div>
+
+    <!-- <div id="g_id_onload"
+      data-client_id="921990581025-nl1amto8mhme9tgapc5ca0fsehkimp9j.apps.googleusercontent.com"
+      data-context="signin"
+      data-ux_mode="popup"
+      data-callback="handleCredentialResponse"
+      data-auto_prompt="false">
+    </div> -->
+
+    <div class="g_id_signin"
+      data-client_id="26435220396-0oj3097i60lmaafoj2q4fkjl7l29c6gm.apps.googleusercontent.com"
+      data-type="standard"
+      data-shape="pill"
+      data-theme="outline"
+      data-text="sign_in_with"
+      data-size="large"
+      data-logo_alignment="left">
+    </div>
+
+    <div id="userInfo"
+      style="display:none; align-items:center; gap:10px; cursor:pointer;">
+      <img id="navUserPic" style="width:35px; border-radius:50%;" />
+      <span id="navUserName"></span>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <h1>Find Your Perfect Hackathon Team</h1>
+    <p>
+      Connect with talented developers, join exciting projects,
+      and make your hackathon dreams come true.
+    </p>
+  </section>
+
+  <!-- Features -->
+  <section class="features">
+    <div class="card">
+      <div class="icon blue">🎖️</div>
+      <h2>Discover Hackathons</h2>
+      <p>Find upcoming hackathons that match your interests and skills.</p>
+    </div>
+
+    <div class="card">
+      <div class="icon green">👥</div>
+      <h2>Build Your Team</h2>
+      <p>Create or join teams with developers who share your vision.</p>
+    </div>
+
+    <div class="card">
+      <div class="icon purple">🚀</div>
+      <h2>Launch Projects</h2>
+      <p>Collaborate in real-time and bring your ideas to life.</p>
+    </div>
+  </section>
+
+  <!-- Buttons (FIXED TAGS ONLY) -->
+  <div class="cta-buttons">
+  <button class="blue-btn" onclick="window.location.href='hackathon.html'">
+    Browse Hackathons
+  </button>
+
+  <button class="green-btn" onclick="window.location.href='find-teams.html'">
+    Find Teams
+  </button>
+</div>
+
+
+  <!-- Firebase Init -->
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCYiSAF6Z4m0AHL7ZXi_loWk0qTJAw1pfI",
+      authDomain: "hackteamfinder.firebaseapp.com",
+      databaseURL: "https://hackteamfinder-default-rtdb.asia-southeast1.firebasedatabase.app/",
+      projectId: "hackteamfinder"
+    };
+    firebase.initializeApp(firebaseConfig);
+  </script>
+
+  <!-- Google Login Callback + Navbar Logic (MERGED) -->
+  <script>
+    function handleCredentialResponse(response) {
+      const data = jwt_decode(response.credential);
+
+      alert("Login success: " + data.email);
+
+      localStorage.setItem("userName", data.name);
+      localStorage.setItem("userEmail", data.email);
+      localStorage.setItem("userPic", data.picture);
+
+      const uid = data.email.replace(/[@.]/g, "_");
+
+firebase.database().ref("users/" + uid).once("value")
+  .then(snapshot => {
+    if (snapshot.exists()) {
+      const user = snapshot.val();
+
+      firebase.database().ref("users/" + uid).update({
+          lastSeen: Date.now()
+        });
+
+      // ✅ profile already completed
+      if (user.profileCompleted === true) {
+        window.location.href = "user.html";
+      } else {
+        window.location.href = "profile-setup.html";
+      }
+
+      // just update lastSeen (NO overwrite)
+      // firebase.database().ref("users/" + uid).update({
+      //   lastSeen: Date.now()
+      // });
+
+    } else {
+      // 🆕 first time user
+      firebase.database().ref("users/" + uid).set({
+        name: data.name,
+        email: data.email,
+        photo: data.picture,
+        profileCompleted: false,
+        createdAt: Date.now(),
+        lastSeen: Date.now()
+      }).then(() => {
+        window.location.href = "profile-setup.html";
+      });
+    }
+  })
+      .catch(err => console.error(err));
+  }
+
+    window.addEventListener("load", function () {
+      const name = localStorage.getItem("userName");
+      const pic = localStorage.getItem("userPic");
+
+      if (name && pic) {
+        document.querySelector(".g_id_signin").style.display = "none";
+        const userInfo = document.getElementById("userInfo");
+        userInfo.style.display = "flex";
+        document.getElementById("navUserName").innerText = name;
+        document.getElementById("navUserPic").src = pic;
+
+        userInfo.onclick = () => window.location.href = "user.html";
+      }
+    });
+  </script>
+
+<script>
+  window.onload = function () {
+    google.accounts.id.initialize({
+      client_id: "921990581025-nl1amto8mhme9tgapc5ca0fsehkimp9j.apps.googleusercontent.com",
+      callback: handleCredentialResponse
+    });
+
+    google.accounts.id.renderButton(
+      document.querySelector(".g_id_signin"),
+      {
+        theme: "outline",
+        size: "large"
+      }
+    );
+  };
+</script>
+
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hackathon Details</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="logo">
+    <span class="emoji">👥</span>
+    <span class="title">HackTeamFinder</span>
+  </div>
+  <div class="nav-links">
+    <a href="hackathon.html">⬅ Back to Hackathons</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <h1 id="title">Hackathon</h1>
+  <p id="desc"></p>
+</section>
+
+<section class="features">
+  <div class="card"><h3>📅 Date</h3><p id="date"></p></div>
+  <div class="card"><h3>🧠 Theme</h3><p id="theme"></p></div>
+  <div class="card"><h3>🏆 Prizes</h3><p id="prizes"></p></div>
+  <div class="card"><h3>👥 Team Size</h3><p id="teamSize"></p></div>
+  <div class="card"><h3>🔗 Registration</h3><a id="reglink" target="_blank">Open Link</a></div>
+  <div class="card"><h3>Source</h3><p id="source"></p></div>
+</section>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+const raw = params.get("data");
+
+if (raw) {
+  const h = JSON.parse(decodeURIComponent(raw));
+
+  document.getElementById("title").innerText = h.name || "Hackathon";
+  document.getElementById("desc").innerText = h.description || "Not specified";
+  document.getElementById("date").innerText = h.deadline || "Not specified";
+  document.getElementById("theme").innerText = h.theme || "Not specified";
+  document.getElementById("prizes").innerText = h.prizes || "Not specified";
+  document.getElementById("teamSize").innerText = h.teamSize || "Not specified";
+  document.getElementById("source").innerText = h.source || "Not specified";
+
+  const link = document.getElementById("reglink");
+  if (h.registrationLink && h.registrationLink !== "Not specified") {
+    link.href = h.registrationLink;
+  } else {
+    link.innerText = "Not available";
+  }
+}
+</script>
+
+</body>
+</html>

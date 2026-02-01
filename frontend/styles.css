@@ -1,0 +1,212 @@
+/* General Reset & Base */
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #f9fafb;
+    color: #1f2937;
+  }
+  
+  /* Navbar */
+  .navbar {
+    background-color: #ffffff;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.05);
+  }
+  
+  .logo {
+    display: flex;
+    align-items: center;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #1d4ed8;
+  }
+  
+  .logo .emoji {
+    font-size: 1.5rem;
+    margin-right: 0.4rem;
+    color: #2563eb;
+  }
+  
+  .nav-links {
+    display: flex;
+    gap: 1.5rem;
+  }
+  
+  .nav-links a {
+    text-decoration: none;
+    color: #374151;
+    font-weight: 500;
+  }
+  
+  .nav-links a:hover {
+    color: #2563eb;
+  }
+  
+  .google-btn {
+    background-color: #3b82f6;
+    color: white;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+  }
+  
+  .google-btn:hover {
+    background-color: #2563eb;
+  }
+  
+  /* Hero Section */
+  .hero {
+    text-align: center;
+    padding: 4rem 1rem 2rem;
+  }
+  
+  .hero h1 {
+    font-size: 2.25rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+  }
+  
+  .hero p {
+    max-width: 700px;
+    margin: 0 auto;
+    font-size: 1.1rem;
+    color: #6b7280;
+  }
+  
+  /* Features Section */
+  .features {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2rem;
+    padding: 2rem 1rem;
+  }
+  
+  .card {
+    background-color: white;
+    width: 260px;
+    padding: 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    text-align: center;
+    transition: 0.3s ease;
+  }
+  
+  .card:hover {
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  }
+  
+  .card h2 {
+    margin-bottom: 0.5rem;
+    font-size: 1.125rem;
+    font-weight: 600;
+  }
+  
+  .card p {
+    font-size: 0.9rem;
+    color: #6b7280;
+  }
+  
+  .icon {
+    font-size: 2rem;
+    margin-bottom: 0.8rem;
+  }
+  
+  .icon.blue {
+    color: #3b82f6;
+  }
+  
+  .icon.green {
+    color: #10b981;
+  }
+  
+  .icon.purple {
+    color: #a855f7;
+  }
+  
+  /* CTA Buttons */
+  .cta-buttons {
+    text-align: center;
+    padding-bottom: 3rem;
+  }
+  
+  .cta-buttons button {
+    padding: 0.6rem 1.2rem;
+    font-size: 1rem;
+    font-weight: 500;
+    margin: 0 0.5rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  
+  .blue-btn {
+    background-color: #2563eb;
+    color: white;
+  }
+  
+  .blue-btn:hover {
+    background-color: #1d4ed8;
+  }
+  
+  .green-btn {
+    background-color: #10b981;
+    color: white;
+  }
+  
+  .green-btn:hover {
+    background-color: #059669;
+  }
+  
+  .logout-btn {
+    background: #ff4d4d;
+    color: white;
+    padding: 8px 12px;
+    border: none;
+    cursor: pointer;
+    border-radius: 6px;
+  }
+  
+  .dashboard {
+    text-align: center;
+    margin-top: 50px;
+  }
+  
+  .dashboard img {
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+  }
+  
+  .profile-card {
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    background-color: #f9f9f9;
+  }
+  .profile-card:hover {
+    background-color: #f1f1f1;
+  }
+  
+  .card-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.card-link .card {
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card-link .card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.12);
+}

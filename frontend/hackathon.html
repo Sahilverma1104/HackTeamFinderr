@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hackathons | HackTeamFinder</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="logo">
+    <span class="emoji">👥</span>
+    <span class="title">HackTeamFinder</span>
+  </div>
+
+  <div class="nav-links">
+    <a href="index.html">🏠 Home</a>
+    <a href="hackathon.html" class="active">👤 Hackathons</a>
+    <a href="find-teams.html">👥 Teams</a>
+  </div>
+
+  <div class="user-profile" onclick="window.location.href='user.html'">
+    Profile
+  </div>
+</nav>
+
+<section class="hero">
+  <h1>Upcoming Hackathons 🚀</h1>
+  <p>Explore hackathons, choose your challenge, and build amazing projects.</p>
+</section>
+
+<section class="features" id="hackathonGrid"></section>
+
+<script>
+async function loadHackathons() {
+  try {
+    const res = await fetch("http://localhost:5000/api/hackathons");
+    const data = await res.json();
+
+    if (!Array.isArray(data)) return;
+
+    const grid = document.getElementById("hackathonGrid");
+    grid.innerHTML = "";
+
+    data.forEach(h => {
+      const card = document.createElement("div");
+      card.className = "card";
+
+      card.innerHTML = `
+        <div class="icon green">🚀</div>
+        <h2>${h.name}</h2>
+        <p>${h.description}</p>
+        <p><strong>Date:</strong> ${h.deadline}</p>
+        <p><strong>Mode:</strong> ${h.mode}</p>
+        <button class="green-btn"
+          onclick="openDetails('${encodeURIComponent(JSON.stringify(h))}')">
+          View Details
+        </button>
+      `;
+
+      grid.appendChild(card);
+    });
+  } catch (e) {
+    console.error("Hackathon load failed", e);
+  }
+}
+
+function openDetails(data) {
+  window.location.href = "hackathon-details.html?data=" + data;
+}
+
+loadHackathons();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Chats | HackTeamFinder</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="styles.css">
+
+  <!-- Firebase (COMPAT – matches chatroom.html) -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f4f6f8;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 0 16px;
+    }
+
+    .chat-card {
+      background: white;
+      padding: 16px;
+      border-radius: 10px;
+      margin-bottom: 12px;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+      transition: background 0.2s;
+    }
+
+    .chat-card:hover {
+      background: #f0f4ff;
+    }
+
+    .chat-name {
+      font-weight: 600;
+    }
+
+    .chat-last {
+      font-size: 0.9rem;
+      color: #555;
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- ✅ NAVBAR -->
+<nav class="navbar">
+  <div class="logo">
+    <span class="emoji">👥</span>
+    <span class="title">HackTeamFinder</span>
+  </div>
+
+  <div class="nav-links">
+    <a href="index.html">🏠 Home</a>
+    <a href="hackathons.html">🏆 Hackathons</a>
+    <a href="find-teams.html">👥 Teams</a>
+  </div>
+
+  <div id="userInfo" style="display:none; cursor:pointer;">
+    <span id="navUserName"></span>
+  </div>
+</nav>
+
+<div class="container">
+  <h2>Your Chats</h2>
+
+  <!-- Example chat cards (manual for now) -->
+  <div class="chat-card" onclick="openChat('USER_1')">
+    <div class="chat-name">Sahil Verma</div>
+    <div class="chat-last">Click to open chat</div>
+  </div>
+
+  <div class="chat-card" onclick="openChat('USER_2')">
+    <div class="chat-name">Priyanshi</div>
+    <div class="chat-last">Click to open chat</div>
+  </div>
+</div>
+
+<script>
+  // Firebase config (same as chatroom.html)
+  const firebaseConfig = {
+    apiKey: "AIzaSyCYiSAF6Z4m0AHL7ZXi_loWk0qTJAw1pfI",
+    authDomain: "hackteamfinder.firebaseapp.com",
+    databaseURL: "https://hackteamfinder-default-rtdb.asia-southeast1.firebasedatabase.app/",
+    projectId: "hackteamfinder"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+
+  function openChat(receiverId) {
+    window.location.href = `chatroom.html?id=${receiverId}`;
+  }
+
+  // Navbar profile
+  window.addEventListener("load", () => {
+    const name = localStorage.getItem("userName");
+    if (name) {
+      document.getElementById("userInfo").style.display = "block";
+      document.getElementById("navUserName").innerText = name;
+      document.getElementById("userInfo").onclick = () =>
+        window.location.href = "user.html";
+    }
+  });
+</script>
+
+</body>
+</html>

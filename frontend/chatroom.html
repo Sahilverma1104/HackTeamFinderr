@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Chat Room</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
+
+  <style>
+    body { margin:0; font-family:Segoe UI; display:flex; flex-direction:column; height:100vh; }
+    .header { background:#007bff; color:white; padding:12px; text-align:center; }
+    .chat { flex:1; padding:15px; overflow-y:auto; }
+    .msg { padding:8px 12px; border-radius:16px; margin:6px 0; max-width:60%; }
+    .me { background:#007bff; color:white; margin-left:auto; }
+    .other { background:#e2e2e2; }
+    .input { display:flex; padding:10px; }
+    input { flex:1; padding:10px; }
+    button { margin-left:8px; padding:10px 16px; }
+  </style>
+</head>
+
+<body>
+
+<div class="header">Chat</div>
+<div class="chat" id="chatBox"></div>
+
+<div class="input">
+  <input id="msgInput" placeholder="Type message..." />
+  <button id="sendBtn">Send</button>
+</div>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyCYiSAF6Z4m0AHL7ZXi_loWk0qTJAw1pfI",
+    authDomain: "hackteamfinder.firebaseapp.com",
+    databaseURL: "https://hackteamfinder-default-rtdb.asia-southeast1.firebasedatabase.app/",
+    projectId: "hackteamfinder"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+
+  const myEmail = localStorage.getItem("userEmail");
+  const myName  = localStorage.getItem("userName");
+
+  if (!myEmail || !myName) {
+    alert("User not logged in");
+    location.href = "index.html";
+  }
+
+  const myId = myEmail.replace(/[@.]/g, "_");
+  const otherId = new URLSearchParams(location.search).get("id");
+
+  const roomId = [myId, otherId].sort().join("_");
+  const ref = firebase.database().ref("chats/" + roomId);
+
+  const box = document.getElementById("chatBox");
+  const input = document.getElementById("msgInput");
+
+  document.getElementById("sendBtn").onclick = () => {
+    const text = input.value.trim();
+    if (!text) return;
+
+    ref.push({
+      senderId: myId,
+      senderName: myName,
+      text,
+      time: Date.now()
+    });
+
+    input.value = "";
+  };
+
+  ref.on("child_added", snap => {
+    const m = snap.val();
+    const div = document.createElement("div");
+    div.className = "msg " + (m.senderId === myId ? "me" : "other");
+    div.innerText = m.senderName + ": " + m.text;
+    box.appendChild(div);
+    box.scrollTop = box.scrollHeight;
+  });
+</script>
+
+<script>
+  const email = localStorage.getItem("userEmail");
+  if (!email) {
+    alert("Login required");
+    window.location.href = "index.html";
+  }
+</script>
+
+
+</body>
+</html>

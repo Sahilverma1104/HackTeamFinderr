@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Complete Your Profile</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
+
+  <style>
+    body {
+      font-family: Segoe UI;
+      background: #f4f6f8;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .card {
+      background: white;
+      padding: 30px;
+      width: 350px;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+    h2 { margin-bottom: 20px; }
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 12px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="card">
+  <h2>Complete Your Profile</h2>
+
+  <textarea id="bio" placeholder="Name"></textarea>
+  <input id="role" placeholder="Your Role (Frontend, ML, Backend)" />
+  <input id="skills" placeholder="Skills (React, Node, Python)" />
+
+  <button onclick="saveProfile()">Save Profile</button>
+</div>
+
+<script>
+  const email = localStorage.getItem("userEmail");
+  if (!email) {
+    window.location.href = "index.html";
+  }
+
+  const uid = email.replace(/[@.]/g, "_");
+
+  firebase.database().ref("users/" + uid).once("value")
+    .then(snap => {
+      if (snap.exists() && snap.val().profileCompleted === true) {
+        window.location.href = "user.html";
+      }
+    });
+</script>
+
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyCYiSAF6Z4m0AHL7ZXi_loWk0qTJAw1pfI",
+    authDomain: "hackteamfinder.firebaseapp.com",
+    databaseURL: "https://hackteamfinder-default-rtdb.asia-southeast1.firebasedatabase.app/",
+    projectId: "hackteamfinder"
+  };
+  firebase.initializeApp(firebaseConfig);
+
+  function saveProfile() {
+    const email = localStorage.getItem("userEmail");
+    const userId = email.replace(/[@.]/g, "_");
+
+    firebase.database().ref("users/" + userId).update({
+      role: role.value,
+      skills: skills.value,
+      bio: bio.value,
+      profileCompleted: true
+    }).then(() => {
+      window.location.href = "index.html";
+    });
+  }
+</script>
+
+</body>
+</html>
