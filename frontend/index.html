@@ -7,12 +7,14 @@
   <link rel="stylesheet" href="styles.css">
 
   <!-- Google GSI (ONLY ONCE) -->
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
-  <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3.1.2/build/jwt-decode.min.js"></script>
+  <!-- <script src="https://accounts.google.com/gsi/client" async defer></script> -->
+  <!-- <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3.1.2/build/jwt-decode.min.js"></script> -->
 
   <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+
 </head>
 
 <body>
@@ -30,6 +32,8 @@
       <a href="find-teams.html"><span class="emoji">👥</span> Teams</a>
     </div>
 
+    
+
     <!-- <div id="g_id_onload"
       data-client_id="921990581025-nl1amto8mhme9tgapc5ca0fsehkimp9j.apps.googleusercontent.com"
       data-context="signin"
@@ -38,7 +42,7 @@
       data-auto_prompt="false">
     </div> -->
 
-    <div class="g_id_signin"
+    <!-- <div class="g_id_signin"
       data-client_id="26435220396-0oj3097i60lmaafoj2q4fkjl7l29c6gm.apps.googleusercontent.com"
       data-type="standard"
       data-shape="pill"
@@ -46,7 +50,12 @@
       data-text="sign_in_with"
       data-size="large"
       data-logo_alignment="left">
-    </div>
+    </div> -->
+
+    <button id="googleLogin" class="google-btn">
+  Sign in with Google
+</button>
+
 
     <div id="userInfo"
       style="display:none; align-items:center; gap:10px; cursor:pointer;">
@@ -109,55 +118,55 @@
   </script>
 
   <!-- Google Login Callback + Navbar Logic (MERGED) -->
-  <script>
-    function handleCredentialResponse(response) {
-      const data = jwt_decode(response.credential);
+  <!-- <script>
+//     function handleCredentialResponse(response) {
+//       const data = jwt_decode(response.credential);
 
-      alert("Login success: " + data.email);
+//       alert("Login success: " + data.email);
 
-      localStorage.setItem("userName", data.name);
-      localStorage.setItem("userEmail", data.email);
-      localStorage.setItem("userPic", data.picture);
+//       localStorage.setItem("userName", data.name);
+//       localStorage.setItem("userEmail", data.email);
+//       localStorage.setItem("userPic", data.picture);
 
-      const uid = data.email.replace(/[@.]/g, "_");
+//       const uid = data.email.replace(/[@.]/g, "_");
 
-firebase.database().ref("users/" + uid).once("value")
-  .then(snapshot => {
-    if (snapshot.exists()) {
-      const user = snapshot.val();
+// firebase.database().ref("users/" + uid).once("value")
+//   .then(snapshot => {
+//     if (snapshot.exists()) {
+//       const user = snapshot.val();
 
-      firebase.database().ref("users/" + uid).update({
-          lastSeen: Date.now()
-        });
+//       firebase.database().ref("users/" + uid).update({
+//           lastSeen: Date.now()
+//         });
 
-      // ✅ profile already completed
-      if (user.profileCompleted === true) {
-        window.location.href = "user.html";
-      } else {
-        window.location.href = "profile-setup.html";
-      }
+//       // ✅ profile already completed
+//       if (user.profileCompleted === true) {
+//         window.location.href = "user.html";
+//       } else {
+//         window.location.href = "profile-setup.html";
+//       }
 
-      // just update lastSeen (NO overwrite)
-      // firebase.database().ref("users/" + uid).update({
-      //   lastSeen: Date.now()
-      // });
+//       // just update lastSeen (NO overwrite)
+//       // firebase.database().ref("users/" + uid).update({
+//       //   lastSeen: Date.now()
+//       // });
 
-    } else {
-      // 🆕 first time user
-      firebase.database().ref("users/" + uid).set({
-        name: data.name,
-        email: data.email,
-        photo: data.picture,
-        profileCompleted: false,
-        createdAt: Date.now(),
-        lastSeen: Date.now()
-      }).then(() => {
-        window.location.href = "profile-setup.html";
-      });
-    }
-  })
-      .catch(err => console.error(err));
-  }
+//     } else {
+//       // 🆕 first time user
+//       firebase.database().ref("users/" + uid).set({
+//         name: data.name,
+//         email: data.email,
+//         photo: data.picture,
+//         profileCompleted: false,
+//         createdAt: Date.now(),
+//         lastSeen: Date.now()
+//       }).then(() => {
+//         window.location.href = "profile-setup.html";
+//       });
+//     }
+//   })
+//       .catch(err => console.error(err));
+//   }
 
     window.addEventListener("load", function () {
       const name = localStorage.getItem("userName");
@@ -173,9 +182,76 @@ firebase.database().ref("users/" + uid).once("value")
         userInfo.onclick = () => window.location.href = "user.html";
       }
     });
-  </script>
+  </script> -->
 
-<script>
+
+  <script>
+  const auth = firebase.auth();
+  const provider = new firebase.auth.GoogleAuthProvider();
+
+  document.getElementById("googleLogin").onclick = () => {
+    auth.signInWithPopup(provider)
+      .then((result) => {
+        const user = result.user;
+
+        localStorage.setItem("userName", user.displayName);
+        localStorage.setItem("userEmail", user.email);
+        localStorage.setItem("userPic", user.photoURL);
+
+        const uid = user.email.replace(/[@.]/g, "_");
+
+        firebase.database().ref("users/" + uid).once("value")
+          .then(snapshot => {
+            if (snapshot.exists()) {
+              firebase.database().ref("users/" + uid)
+                .update({ lastSeen: Date.now() });
+
+              if (snapshot.val().profileCompleted === true) {
+                window.location.href = "user.html";
+              } else {
+                window.location.href = "profile-setup.html";
+              }
+            } else {
+              firebase.database().ref("users/" + uid).set({
+                name: user.displayName,
+                email: user.email,
+                photo: user.photoURL,
+                profileCompleted: false,
+                createdAt: Date.now(),
+                lastSeen: Date.now()
+              }).then(() => {
+                window.location.href = "profile-setup.html";
+              });
+            }
+          });
+      })
+      .catch(err => console.error(err));
+  };
+
+  // Navbar session restore
+  window.addEventListener("load", () => {
+    const name = localStorage.getItem("userName");
+    const pic = localStorage.getItem("userPic");
+
+    if (name && pic) {
+      const loginBtn = document.getElementById("googleLogin");
+      if (loginBtn) loginBtn.style.display = "none";
+
+      const userInfo = document.getElementById("userInfo");
+      userInfo.style.display = "flex";
+      document.getElementById("navUserName").innerText = name;
+      document.getElementById("navUserPic").src = pic;
+
+      userInfo.onclick = () => window.location.href = "user.html";
+    }
+  });
+</script>
+
+
+
+
+  
+<!-- <script>
   window.onload = function () {
     google.accounts.id.initialize({
       client_id: "921990581025-nl1amto8mhme9tgapc5ca0fsehkimp9j.apps.googleusercontent.com",
@@ -190,7 +266,7 @@ firebase.database().ref("users/" + uid).once("value")
       }
     );
   };
-</script>
+</script> -->
 
 </body>
 </html>
